@@ -5,19 +5,19 @@ PODS:
 
 DEPENDENCIES:
   - iOSDFULibrary (from `../`)
-  - Zip (from `git@github.com:marmelroy/Zip.git`, branch `swift2.3`)
+  - Zip (from `git@github.com:marmelroy/Zip.git`, branch `swift3.0`)
 
 EXTERNAL SOURCES:
   iOSDFULibrary:
     :path: "../"
   Zip:
-    :branch: swift2.3
+    :branch: swift3.0
     :git: git@github.com:marmelroy/Zip.git
     :submodules: true
 
 CHECKOUT OPTIONS:
   Zip:
-    :commit: 88ba969d0b12fea5ba4d213229c4d7d8c540ee23
+    :commit: a97fe9b9ca0c790d6771f5a32086a9f057ecbd24
     :git: git@github.com:marmelroy/Zip.git
     :submodules: true
 
@@ -25,6 +25,6 @@ SPEC CHECKSUMS:
   iOSDFULibrary: ad41b45f7cfcfc6d52a9250f6c38646bc4b77597
   Zip: 670419a5ba9faaf5f24ed3650c4c38b4136e996b
 
-PODFILE CHECKSUM: f35dc363733439e5130779700376b3e8ebc4a382
+PODFILE CHECKSUM: 598abbb1a213f43f41c23e4655f64dda873ec131
 
 COCOAPODS: 1.1.0.rc.2
