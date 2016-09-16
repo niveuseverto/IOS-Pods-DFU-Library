@@ -308,9 +308,35 @@ import CoreBluetooth
     }
     
     // MARK: - Central Manager methods
-    
     func centralManagerDidUpdateState(central: CBCentralManager) {
-        logCentralManagerState(central.state)
+        var stateAsString:String
+        
+        switch (central.state) {
+        case .PoweredOn:
+            stateAsString = "Powered ON"
+            break
+            
+        case .PoweredOff:
+            stateAsString = "Powered OFF"
+            break
+            
+        case .Resetting:
+            stateAsString = "Resetting"
+            break
+            
+        case .Unauthorized:
+            stateAsString = "Unauthorized"
+            break
+            
+        case .Unsupported:
+            stateAsString = "Unsupported"
+            break
+            
+        case .Unknown:
+            stateAsString = "Unknown"
+            break
+        }
+        logger.d("[Callback] Central Manager did update state to: \(stateAsString)")
     }
     
     func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
@@ -454,36 +480,5 @@ import CoreBluetooth
     
     private func cleanUp() {
         dfuService = nil
-    }
-    
-    private func logCentralManagerState(state:CBCentralManagerState) {
-        var stateAsString:String
-        
-        switch (state) {
-        case .PoweredOn:
-            stateAsString = "Powered ON"
-            break
-            
-        case .PoweredOff:
-            stateAsString = "Powered OFF"
-            break
-            
-        case .Resetting:
-            stateAsString = "Resetting"
-            break
-            
-        case .Unauthorized:
-            stateAsString = "Unauthorized"
-            break
-            
-        case .Unsupported:
-            stateAsString = "Unsupported"
-            break
-            
-        case .Unknown:
-            stateAsString = "Unknown"
-            break
-        }
-        logger.d("[Callback] Central Manager did update state to: \(stateAsString)")
     }
 }

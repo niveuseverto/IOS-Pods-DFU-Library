@@ -84,35 +84,35 @@ internal enum Request {
     var data : NSData {
         switch self {
         case .JumpToBootloader:
-            let bytes:[UInt8] = [OpCode.StartDfu.code, FIRMWARE_TYPE_APPLICATION]
+            let bytes:[UInt8] = [DFUOpCode.StartDfu.code, FIRMWARE_TYPE_APPLICATION]
             return NSData(bytes: bytes, length: 2)
         case .StartDfu(let type):
-            let bytes:[UInt8] = [OpCode.StartDfu.code, type]
+            let bytes:[UInt8] = [DFUOpCode.StartDfu.code, type]
             return NSData(bytes: bytes, length: 2)
         case .StartDfu_v1:
-            let bytes:[UInt8] = [OpCode.StartDfu.code]
+            let bytes:[UInt8] = [DFUOpCode.StartDfu.code]
             return NSData(bytes: bytes, length: 1)
         case .InitDfuParameters(let req):
-            let bytes:[UInt8] = [OpCode.InitDfuParameters.code, req.code]
+            let bytes:[UInt8] = [DFUOpCode.InitDfuParameters.code, req.code]
             return NSData(bytes: bytes, length: 2)
         case .InitDfuParameters_v1:
-            let bytes:[UInt8] = [OpCode.InitDfuParameters.code]
+            let bytes:[UInt8] = [DFUOpCode.InitDfuParameters.code]
             return NSData(bytes: bytes, length: 1)
         case .ReceiveFirmwareImage:
-            let bytes:[UInt8] = [OpCode.ReceiveFirmwareImage.code]
+            let bytes:[UInt8] = [DFUOpCode.ReceiveFirmwareImage.code]
             return NSData(bytes: bytes, length: 1)
         case .ValidateFirmware:
-            let bytes:[UInt8] = [OpCode.ValidateFirmware.code]
+            let bytes:[UInt8] = [DFUOpCode.ValidateFirmware.code]
             return NSData(bytes: bytes, length: 1)
         case .ActivateAndReset:
-            let bytes:[UInt8] = [OpCode.ActivateAndReset.code]
+            let bytes:[UInt8] = [DFUOpCode.ActivateAndReset.code]
             return NSData(bytes: bytes, length: 1)
         case .Reset:
-            let bytes:[UInt8] = [OpCode.Reset.code]
+            let bytes:[UInt8] = [DFUOpCode.Reset.code]
             return NSData(bytes: bytes, length: 1)
         case .PacketReceiptNotificationRequest(let number):
             let data = NSMutableData(capacity: 5)!
-            let bytes:[UInt8] = [OpCode.PacketReceiptNotificationRequest.code]
+            let bytes:[UInt8] = [DFUOpCode.PacketReceiptNotificationRequest.code]
             data.appendBytes(bytes, length: 1)
             var n = number.littleEndian
             withUnsafePointer(&n) {
@@ -198,9 +198,9 @@ internal enum DFUResultCode : UInt8 {
 }
 
 internal struct Response {
-    let opCode:OpCode?
-    let requestOpCode:OpCode?
-    let status:StatusCode?
+    let opCode:DFUOpCode?
+    let requestOpCode:DFUOpCode?
+    let status:DFUResultCode?
     
     init?(_ data:NSData) {
         var opCode:UInt8 = 0
@@ -209,11 +209,11 @@ internal struct Response {
         data.getBytes(&opCode, range: NSRange(location: 0, length: 1))
         data.getBytes(&requestOpCode, range: NSRange(location: 1, length: 1))
         data.getBytes(&status, range: NSRange(location: 2, length: 1))
-        self.opCode = OpCode(rawValue: opCode)
-        self.requestOpCode = OpCode(rawValue: requestOpCode)
-        self.status = StatusCode(rawValue: status)
+        self.opCode = DFUOpCode(rawValue: opCode)
+        self.requestOpCode = DFUOpCode(rawValue: requestOpCode)
+        self.status = DFUResultCode(rawValue: status)
         
-        if self.opCode != OpCode.ResponseCode || self.requestOpCode == nil || self.status == nil {
+        if self.opCode != DFUOpCode.ResponseCode || self.requestOpCode == nil || self.status == nil {
             return nil
         }
     }
@@ -224,15 +224,15 @@ internal struct Response {
 }
 
 internal struct PacketReceiptNotification {
-    let opCode:OpCode?
+    let opCode:DFUOpCode?
     let bytesReceived:Int
     
     init?(_ data:NSData) {
         var opCode:UInt8 = 0
         data.getBytes(&opCode, range: NSRange(location: 0, length: 1))
-        self.opCode = OpCode(rawValue: opCode)
+        self.opCode = DFUOpCode(rawValue: opCode)
         
-        if self.opCode != OpCode.PacketReceiptNotification {
+        if self.opCode != DFUOpCode.PacketReceiptNotification {
             return nil
         }
         
@@ -422,7 +422,7 @@ internal struct PacketReceiptNotification {
             if let response = response {
                 logger.a("\(response.description) received")
                 
-                if response.status == StatusCode.Success {
+                if response.status == DFUResultCode.Success {
                     switch response.requestOpCode! {
                     case .InitDfuParameters:
                         logger.a("Initialize DFU Parameters completed")

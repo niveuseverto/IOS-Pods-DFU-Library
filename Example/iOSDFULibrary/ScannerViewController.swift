@@ -57,7 +57,7 @@ class ScannerViewController: UIViewController, CBCentralManagerDelegate, UITable
     
     //MARK: - CBCentralManagerDelegate
     func centralManagerDidUpdateState(central: CBCentralManager) {
-        if central.state == CBCentralManagerState.PoweredOn {
+        if central.state.rawValue == CBCentralManagerState.PoweredOn.rawValue {
             print("CentralManager is now powered on\nStart discovery")
             self.startDiscovery()
         }
